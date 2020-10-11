@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 public class AddressBook {
     private TreeMap<String, ArrayList<PersonDetails>> adrbook = new TreeMap<String, ArrayList<PersonDetails>>();
     private Scanner scanner = new Scanner(System.in);
+    private final int STATE=2;
+    private final int CITY=1;
 
     public void addressBookManager() {
         int choice = 0;
@@ -213,11 +215,11 @@ public class AddressBook {
 
     }
 
-    public void checkPersonByStateorCity() {
+    public ArrayList<String> checkPersonByStateorCity() {
         System.out.println("Do you want to search names by" + "1. City\n" + "2. State");
         int choice = scanner.nextInt();
         scanner.nextLine();
-        List<String> ListofPerson = new ArrayList<>();
+        ArrayList<String> ListofPerson = new ArrayList<>();
         switch (choice) {
 
             case 1: {
@@ -231,6 +233,7 @@ public class AddressBook {
                                 forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
                     } else System.out.println("All address books are empty");
                 }
+                viewPersonByStateorCity(ListofPerson,cityname,CITY);
                 break;
 
             }
@@ -246,11 +249,37 @@ public class AddressBook {
                                 forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
                     } else System.out.println("All address books are empty");
                 }
+                viewPersonByStateorCity(ListofPerson,statename,STATE);
                 break;
 
             }
+
+        }  System.out.println("List of persons living in your searched area are\n");
+        ListofPerson.stream().forEach(l->System.out.println(l+"\n"));
+        return ListofPerson;
+    }
+
+    public void viewPersonByStateorCity(ArrayList<String> ListofPersons,String name,int choice){
+        TreeMap<String,ArrayList<String>> CityDictionary=new TreeMap<String, ArrayList<String>>();
+        TreeMap<String,ArrayList<String>> StateDictionary=new TreeMap<String, ArrayList<String>>();
+        switch (choice){
+            case 1:{CityDictionary.put(name,ListofPersons);
+                    System.out.println("Want to view city dictionary\n"+"yes\n"+"2. no\n");
+                    String answer=scanner.nextLine();
+                    if(answer.toLowerCase().compareTo("yes")==0)
+                        CityDictionary.entrySet().stream().forEach(c->System.out.println(c.getKey()+"---->"+c.getValue()));
+                    break;
+            }
+
+            case 2:{StateDictionary.put(name,ListofPersons);
+                System.out.println("Want to view state dictionary\n"+"yes\n"+"2. no\n");
+                String answer=scanner.nextLine();
+                if(answer.toLowerCase().compareTo("yes")==0)
+                    StateDictionary.entrySet().stream().forEach(c->System.out.println(c.getKey()+"---->"+c.getValue()));
+                break;
+            }
         }
-        System.out.println(ListofPerson);
+
     }
 
     public static void main(String[] args) {
