@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 public class AddressBook {
     private TreeMap<String, ArrayList<PersonDetails>> adrbook = new TreeMap<String, ArrayList<PersonDetails>>();
     private Scanner scanner = new Scanner(System.in);
-    private final int STATE=2;
-    private final int CITY=1;
+    private final int STATE = 2;
+    private final int CITY = 1;
 
     public void addressBookManager() {
         int choice = 0;
         do {
-            System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" + "3. Search for persons in a city/state" + "4. Exit");
+            System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" + "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" + "5. Exit");
             choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
@@ -43,12 +43,17 @@ public class AddressBook {
                     checkPersonByStateorCity();
                     break;
                 }
+
+                case 4: {
+                    countPersonByStateorCity();
+                    break;
+                }
                 default:
                     System.out.println("thank you for using the application");
 
             }
 
-        } while (!(choice == 3));
+        } while (!(choice == 5));
     }
 
 
@@ -189,7 +194,7 @@ public class AddressBook {
                 }
 
                 case 2: {
-                    if (personDetails.isEmpty()) System.out.println("Addressbook is emppty,please add details");
+                    if (personDetails.isEmpty()) System.out.println("Addressbook is empty,please add details");
                     else {
                         System.out.println("Enter first name of person whose record is to be edited");
                         name = scanner.nextLine();
@@ -216,7 +221,7 @@ public class AddressBook {
     }
 
     public ArrayList<String> checkPersonByStateorCity() {
-        System.out.println("Do you want to search names by" + "1. City\n" + "2. State");
+        System.out.println("Do you want to search names by\n" + "1. City\n" + "2. State");
         int choice = scanner.nextInt();
         scanner.nextLine();
         ArrayList<String> ListofPerson = new ArrayList<>();
@@ -228,12 +233,12 @@ public class AddressBook {
                 if (adrbook.isEmpty())
                     System.out.println("No adress book found please enter one and add contact there");
                 else {
-                    if ((adrbook.entrySet().stream().filter(e -> e.getValue().isEmpty()).count()) == 0) {
-                        adrbook.entrySet().stream().forEach(t -> t.getValue().stream().filter(p -> p.getCity().compareTo(cityname) == 0).
-                                forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
-                    } else System.out.println("All address books are empty");
+                    adrbook.entrySet().stream().forEach(t -> t.getValue().stream().filter(p -> p.getCity().compareTo(cityname) == 0).
+                            forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
+                    if (ListofPerson.isEmpty()) System.out.println("No record found");
+                    else viewPersonByStateorCity(ListofPerson, cityname, CITY);
                 }
-                viewPersonByStateorCity(ListofPerson,cityname,CITY);
+
                 break;
 
             }
@@ -244,42 +249,82 @@ public class AddressBook {
                 if (adrbook.isEmpty())
                     System.out.println("No adress book found please enter one and add contact there");
                 else {
-                    if ((adrbook.entrySet().stream().filter(e -> e.getValue().isEmpty()).count()) == 0) {
-                        adrbook.entrySet().stream().forEach(t -> t.getValue().stream().filter(p -> p.getState().compareTo(statename) == 0).
-                                forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
-                    } else System.out.println("All address books are empty");
+                    adrbook.entrySet().stream().forEach(t -> t.getValue().stream().filter(p -> p.getState().compareTo(statename) == 0).
+                            forEach(p -> ListofPerson.add(p.getFirst_name().concat(" ".concat(p.getLast_name())))));
+                    if (ListofPerson.isEmpty()) System.out.println("No record found");
+                    else viewPersonByStateorCity(ListofPerson, statename, STATE);
                 }
-                viewPersonByStateorCity(ListofPerson,statename,STATE);
                 break;
-
             }
 
-        }  System.out.println("List of persons living in your searched area are\n");
-        ListofPerson.stream().forEach(l->System.out.println(l+"\n"));
+        }
+        System.out.println("List of persons living in your searched area are\n");
+        ListofPerson.stream().forEach(l -> System.out.println(l + "\n"));
         return ListofPerson;
     }
 
-    public void viewPersonByStateorCity(ArrayList<String> ListofPersons,String name,int choice){
-        TreeMap<String,ArrayList<String>> CityDictionary=new TreeMap<String, ArrayList<String>>();
-        TreeMap<String,ArrayList<String>> StateDictionary=new TreeMap<String, ArrayList<String>>();
-        switch (choice){
-            case 1:{CityDictionary.put(name,ListofPersons);
-                    System.out.println("Want to view city dictionary\n"+"yes\n"+"2. no\n");
-                    String answer=scanner.nextLine();
-                    if(answer.toLowerCase().compareTo("yes")==0)
-                        CityDictionary.entrySet().stream().forEach(c->System.out.println(c.getKey()+"---->"+c.getValue()));
-                    break;
+    public void viewPersonByStateorCity(ArrayList<String> ListofPersons, String name, int choice) {
+        TreeMap<String, ArrayList<String>> CityDictionary = new TreeMap<String, ArrayList<String>>();
+        TreeMap<String, ArrayList<String>> StateDictionary = new TreeMap<String, ArrayList<String>>();
+        switch (choice) {
+            case 1: {
+                CityDictionary.put(name, ListofPersons);
+                System.out.println("Want to view city dictionary\n" + "yes\n" + "2. no\n");
+                String answer = scanner.nextLine();
+                if (answer.toLowerCase().compareTo("yes") == 0)
+                    CityDictionary.entrySet().stream().forEach(c -> System.out.println(c.getKey() + "---->" + c.getValue()));
+                break;
             }
 
-            case 2:{StateDictionary.put(name,ListofPersons);
-                System.out.println("Want to view state dictionary\n"+"yes\n"+"2. no\n");
-                String answer=scanner.nextLine();
-                if(answer.toLowerCase().compareTo("yes")==0)
-                    StateDictionary.entrySet().stream().forEach(c->System.out.println(c.getKey()+"---->"+c.getValue()));
+            case 2: {
+                StateDictionary.put(name, ListofPersons);
+                System.out.println("Want to view state dictionary\n" + "yes\n" + "2. no\n");
+                String answer = scanner.nextLine();
+                if (answer.toLowerCase().compareTo("yes") == 0)
+                    StateDictionary.entrySet().stream().forEach(c -> System.out.println(c.getKey() + "---->" + c.getValue()));
                 break;
             }
         }
 
+    }
+
+    public void countPersonByStateorCity() {
+        long[] count = {0};
+        System.out.println("Do you want to count by\n" + "1. City\n" + "2. State");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+
+            case 1: {
+                System.out.println("Enter the city name");
+                String cityname = scanner.nextLine();
+                if (adrbook.isEmpty())
+                    System.out.println("No adress book found please enter one and add contact there");
+                else {
+                    adrbook.entrySet().stream().forEach(t -> {
+                        count[0] = count[0] + t.getValue().stream().filter(p -> p.getCity().compareTo(cityname) == 0).count();
+                    });
+                }
+                if (count[0] == 0) System.out.println("No record found");
+                else System.out.println("Number of persons in " + cityname + " " + count[0]);
+                break;
+            }
+
+
+            case 2: {
+                System.out.println("Enter the state name");
+                String statename = scanner.nextLine();
+                if (adrbook.isEmpty())
+                    System.out.println("No adress book found please enter one and add contact there");
+                else {
+                    adrbook.entrySet().stream().forEach(t -> count[0] = count[0] + t.getValue().stream().filter(p -> p.getCity().compareTo(statename) == 0).count());
+                }
+                if (count[0] == 0) System.out.println("No record found");
+                else System.out.println("Number of persons in " + statename + " " + count[0]);
+                break;
+            }
+
+        }
     }
 
     public static void main(String[] args) {
