@@ -46,10 +46,21 @@ public class AddressBook {
 
     public ArrayList<PersonDetails> setDetails(ArrayList<PersonDetails> newDetails) {
 
-        System.out.println("Enter your first name");
-      String  first_name= scanner.nextLine();
-        System.out.println("Enter your last name");
-        String last_name= scanner.nextLine();
+        boolean check;
+        String first_name,last_name;
+        do{
+            System.out.println("Enter your first name");
+            first_name= scanner.nextLine();
+            System.out.println("Enter your last name");
+            last_name= scanner.nextLine();
+            PersonDetails checkduplicatename=new PersonDetails(first_name,last_name);
+            if(checkduplicatename.equals(newDetails)) {
+                System.out.println("Name exists...please enter non duplicate name");
+                check=true;
+            }
+            else check=false;
+        }while(check);
+
         System.out.println("Enter your address/block number/street name ");
         String address= scanner.nextLine();
         System.out.println("Enter your city");

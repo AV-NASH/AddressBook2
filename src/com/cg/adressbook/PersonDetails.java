@@ -103,5 +103,13 @@ public class PersonDetails {
         this.email_id = email_id;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        boolean result;
+        ArrayList<PersonDetails> personDetailsArray=(ArrayList<PersonDetails>)obj;
+        if((personDetailsArray.stream().filter(p->(p.getFirst_name().compareTo(this.getFirst_name())==0)&&(p.getLast_name().compareTo(this.getLast_name())==0)).count())==0) return false;
+        else return true;
+
+    }
 
 }
