@@ -112,4 +112,9 @@ public class PersonDetails {
 
     }
 
+    @Override
+    public String toString(){
+        return first_name+" "+last_name+" || "+address+" || "+city+" || "+state+" || "+zip+" || "+phone_number+" || "+email_id;
+    }
+
 }

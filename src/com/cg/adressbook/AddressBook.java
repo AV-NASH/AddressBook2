@@ -1,9 +1,6 @@
 package com.cg.adressbook;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddressBook {
@@ -173,6 +170,14 @@ public class AddressBook {
         return removeDetails;
     }
 
+    public void viewDetails(ArrayList<PersonDetails> viewPersons){
+        Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getFirst_name().concat(" ".concat(a.getLast_name())).compareTo(b.getFirst_name().concat(" ".concat(b.getLast_name())));
+
+       Collections.sort(viewPersons,comparator);
+       System.out.println("Contacts in address book is shown");
+       viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+    }
+
     public void PersonDetailsManager(ArrayList<PersonDetails> personDetails) {
 
         int choice;
@@ -182,7 +187,9 @@ public class AddressBook {
             System.out.println("1.Add a entry to addressbook");
             System.out.println("2.Edit a entry of addressbook");
             System.out.println("3. Delete a entry of addressbook");
-            System.out.println("4. Exit the address book");
+            System.out.println("4. View a entry of addressbook");
+            System.out.println("5. Exit the address book");
+
             System.out.println("Enter your choice");
             choice = scanner.nextInt();
             scanner.nextLine();
@@ -213,9 +220,17 @@ public class AddressBook {
                     break;
                 }
 
+                case 4: {
+                    if (personDetails.isEmpty()) System.out.println("Addressbook is emppty,please add details");
+                    else {
+                       viewDetails(personDetails);
+                    }
+                    break;
+                }
+
             }
 
-        } while (choice != 4);
+        } while (choice != 5);
 
 
     }
