@@ -171,11 +171,43 @@ public class AddressBook {
     }
 
     public void viewDetails(ArrayList<PersonDetails> viewPersons){
-        Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getFirst_name().concat(" ".concat(a.getLast_name())).compareTo(b.getFirst_name().concat(" ".concat(b.getLast_name())));
+        System.out.println("want to view contact details sorted by which f the following filed\n"+"1. Name\n"+"2. City\n"+"3. State\n"+"4. Zip");
+        int choice =scanner.nextInt();
+        scanner.nextLine();
+        switch (choice){
 
+            case 1:{
+        Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->
+                a.getFirst_name().concat(" ".concat(a.getLast_name())).compareTo(b.getFirst_name().concat(" ".concat(b.getLast_name())));
        Collections.sort(viewPersons,comparator);
-       System.out.println("Contacts in address book is shown");
+       System.out.println("Contacts in address book sort by name is shown");
        viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+       break;
+            }
+            case 2:{
+                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getCity().compareTo(b.getCity());
+                Collections.sort(viewPersons,comparator);
+                System.out.println("Contacts in address book sort by city is shown");
+                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                break;
+            }
+
+            case 3:{
+                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getState().compareTo(b.getState());
+                Collections.sort(viewPersons,comparator);
+                System.out.println("Contacts in address book sort by state is shown");
+                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                break;
+            }
+            case 4:{
+                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getZip().compareTo(b.getZip());
+                Collections.sort(viewPersons,comparator);
+                System.out.println("Contacts in address book sort by state is shown");
+                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                break;
+            }
+
+        }
     }
 
     public void PersonDetailsManager(ArrayList<PersonDetails> personDetails) {
