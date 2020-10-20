@@ -1,5 +1,6 @@
 package com.cg.adressbook;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,10 +10,12 @@ public class AddressBook {
     private final int STATE = 2;
     private final int CITY = 1;
 
-    public void addressBookManager() {
+    public void addressBookManager() throws IOException {
         int choice = 0;
         do {
-            System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" + "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" + "5. Exit");
+            System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" +
+                    "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" +
+                    "5. Add Addressbook to file\n"+ "6. View Contents of file\n"+"7. Exit");
             choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
@@ -24,7 +27,7 @@ public class AddressBook {
                     break;
                 }
                 case 2: {
-                    if (adrbook.isEmpty()) System.out.println("no address book found, please creae one please");
+                    if (adrbook.isEmpty()) System.out.println("no address book found, please create one please");
                     else {
 
                         System.out.println("Enter the address book name");
@@ -45,12 +48,27 @@ public class AddressBook {
                     countPersonByStateorCity();
                     break;
                 }
+
+                case 5: {
+                   AddressBookFileHandling addressBookFileHandling=new AddressBookFileHandling();
+                    System.out.println("Enter the addressbook name you want to add to file");
+                    String bookname=scanner.nextLine();
+                    if(adrbook.containsKey(bookname))
+                        addressBookFileHandling.AddressBookWriteToFile(adrbook.get(bookname),bookname);
+                    else System.out.println("Addressbook does not exist");
+                    break;
+                }
+                case 6:{
+                    AddressBookFileHandling addressBookFileHandling=new AddressBookFileHandling();
+                    addressBookFileHandling.AddressBookReadFromFile();
+                    break;
+                }
                 default:
                     System.out.println("thank you for using the application");
 
             }
 
-        } while (!(choice == 5));
+        } while (!(choice == 7));
     }
 
 
@@ -170,40 +188,39 @@ public class AddressBook {
         return removeDetails;
     }
 
-    public void viewDetails(ArrayList<PersonDetails> viewPersons){
-        System.out.println("want to view contact details sorted by which f the following filed\n"+"1. Name\n"+"2. City\n"+"3. State\n"+"4. Zip");
-        int choice =scanner.nextInt();
+    public void viewDetails(ArrayList<PersonDetails> viewPersons) {
+        System.out.println("want to view contact details sorted by which f the following filed\n" + "1. Name\n" + "2. City\n" + "3. State\n" + "4. Zip");
+        int choice = scanner.nextInt();
         scanner.nextLine();
-        switch (choice){
+        switch (choice) {
 
-            case 1:{
-        Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->
-                a.getFirst_name().concat(" ".concat(a.getLast_name())).compareTo(b.getFirst_name().concat(" ".concat(b.getLast_name())));
-       Collections.sort(viewPersons,comparator);
-       System.out.println("Contacts in address book sort by name is shown");
-       viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
-       break;
+            case 1: {
+
+                viewPersons.sort(Comparator.comparing(PersonDetails::getFirst_name).thenComparing(PersonDetails::getLast_name));
+                System.out.println("Contacts in address book sort by name is shown");
+                viewPersons.stream().forEach(viewPerson -> System.out.println(viewPerson.toString()));
+                break;
             }
-            case 2:{
-                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getCity().compareTo(b.getCity());
-                Collections.sort(viewPersons,comparator);
+            case 2: {
+                Comparator<PersonDetails> comparator = Comparator.comparing(PersonDetails::getCity);
+                viewPersons.sort(comparator);
                 System.out.println("Contacts in address book sort by city is shown");
-                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                viewPersons.stream().forEach(viewPerson -> System.out.println(viewPerson.toString()));
                 break;
             }
 
-            case 3:{
-                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getState().compareTo(b.getState());
-                Collections.sort(viewPersons,comparator);
+            case 3: {
+                Comparator<PersonDetails> comparator = Comparator.comparing(PersonDetails::getState);
+                viewPersons.sort(comparator);
                 System.out.println("Contacts in address book sort by state is shown");
-                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                viewPersons.stream().forEach(viewPerson -> System.out.println(viewPerson.toString()));
                 break;
             }
-            case 4:{
-                Comparator<PersonDetails> comparator=(PersonDetails a,PersonDetails b)->a.getZip().compareTo(b.getZip());
-                Collections.sort(viewPersons,comparator);
+            case 4: {
+                Comparator<PersonDetails> comparator = Comparator.comparing(PersonDetails::getZip);
+                viewPersons.sort(comparator);
                 System.out.println("Contacts in address book sort by state is shown");
-                viewPersons.stream().forEach(viewPerson->System.out.println(viewPerson.toString()));
+                viewPersons.stream().forEach(viewPerson -> System.out.println(viewPerson.toString()));
                 break;
             }
 
@@ -255,7 +272,7 @@ public class AddressBook {
                 case 4: {
                     if (personDetails.isEmpty()) System.out.println("Addressbook is emppty,please add details");
                     else {
-                       viewDetails(personDetails);
+                        viewDetails(personDetails);
                     }
                     break;
                 }
@@ -374,7 +391,7 @@ public class AddressBook {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         // TODO Auto-generated method stub
         System.out.println("Welcome to the addressbook\n");
