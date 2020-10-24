@@ -1,5 +1,8 @@
 package com.cg.adressbook;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,12 +13,13 @@ public class AddressBook {
     private final int STATE = 2;
     private final int CITY = 1;
 
-    public void addressBookManager() throws IOException {
+    public void addressBookManager() throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
         int choice = 0;
         do {
             System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" +
                     "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" +
-                    "5. Add Addressbook to file\n"+ "6. View Contents of file\n"+"7. Exit");
+                    "5. Add Addressbook to file\n"+ "6. View Contents of file\n"+"7. Add addressbook to csv File"+
+                    "8. View Contents of csv file"+"9. Exit");
             choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
@@ -63,12 +67,27 @@ public class AddressBook {
                     addressBookFileHandling.AddressBookReadFromFile();
                     break;
                 }
+
+                case 7: {
+                    AddressBookCSVOperation addressBookCSVOperation=new AddressBookCSVOperation();
+                    System.out.println("Enter the addressbook name you want to add to file");
+                    String bookname=scanner.nextLine();
+                    if(adrbook.containsKey(bookname))
+                      addressBookCSVOperation.writeAddressBookToCSV(adrbook.get(bookname));
+                    else System.out.println("Addressbook does not exist");
+                    break;
+                }
+                case 8:{
+                    AddressBookCSVOperation addressBookCSVOperation=new AddressBookCSVOperation();
+                    addressBookCSVOperation.readAddressBookFromCSV();
+                    break;
+                }
                 default:
                     System.out.println("thank you for using the application");
 
             }
 
-        } while (!(choice == 7));
+        } while (!(choice == 9));
     }
 
 
@@ -391,7 +410,7 @@ public class AddressBook {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 
         // TODO Auto-generated method stub
         System.out.println("Welcome to the addressbook\n");
