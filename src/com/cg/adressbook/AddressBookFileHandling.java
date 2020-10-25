@@ -3,9 +3,27 @@ package com.cg.adressbook;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class AddressBookFileHandling {
 
+    public void userInterface(TreeMap<String, ArrayList<PersonDetails>> adrbook) throws IOException {
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("Please choose your action"+"1. add addressbook to json file"+"2. read json file");
+        int choice=scanner.nextInt();
+        scanner.nextLine();
+        switch (choice){
+            case 1:{System.out.println("Enter the addressbook name you want to add to file");
+                String bookname=scanner.nextLine();
+                if(adrbook.containsKey(bookname))
+                    AddressBookWriteToFile(adrbook.get(bookname),bookname);
+                else System.out.println("Addressbook does not exist");
+                break;}
+            case 2:{ AddressBookReadFromFile();
+                break;
+            }
+        }
+    }
 
     public void AddressBookWriteToFile(ArrayList<PersonDetails> personDetailsArrayList, String bookname) throws IOException {
         if (personDetailsArrayList.isEmpty()) System.out.println("List is empty");

@@ -12,13 +12,28 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class AddressBookCSVOperation {
 
     Path path = Paths.get("C:\\Users\\Avinash\\IdeaProjects\\AddressBookProblem\\src\\com\\cg\\adressbook\\CSVFile.csv");
+    public void userInterface(TreeMap<String, ArrayList<PersonDetails>> adrbook) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("Please choose your action"+"1. add addressbook to json file"+"2. read json file");
+        int choice=scanner.nextInt();
+        scanner.nextLine();
+        switch (choice){
+            case 1:{System.out.println("Enter the addressbook name you want to add to file");
+                String bookname=scanner.nextLine();
+                if(adrbook.containsKey(bookname))
+                    writeAddressBookToCSV(adrbook.get(bookname));
+                else System.out.println("Addressbook does not exist");
+                break;}
+            case 2:{ readAddressBookFromCSV();
+                break;
+            }
+        }
+    }
 
     public void writeAddressBookToCSV(ArrayList<PersonDetails> personDetailsArrayList) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 

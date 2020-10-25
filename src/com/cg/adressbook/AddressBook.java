@@ -18,8 +18,7 @@ public class AddressBook {
         do {
             System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" +
                     "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" +
-                    "5. Add Addressbook to file\n"+ "6. View Contents of file\n"+"7. Add addressbook to csv File"+
-                    "8. View Contents of csv file"+"9. Exit");
+                    "5. view file operations\n"+"6. viw csv operation\n"+"7. view json operation"+"8. exit");
             choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
@@ -53,33 +52,22 @@ public class AddressBook {
                     break;
                 }
 
-                case 5: {
-                   AddressBookFileHandling addressBookFileHandling=new AddressBookFileHandling();
-                    System.out.println("Enter the addressbook name you want to add to file");
-                    String bookname=scanner.nextLine();
-                    if(adrbook.containsKey(bookname))
-                        addressBookFileHandling.AddressBookWriteToFile(adrbook.get(bookname),bookname);
-                    else System.out.println("Addressbook does not exist");
-                    break;
-                }
-                case 6:{
+
+                case 5:{
                     AddressBookFileHandling addressBookFileHandling=new AddressBookFileHandling();
-                    addressBookFileHandling.AddressBookReadFromFile();
+                    addressBookFileHandling.userInterface(adrbook);
                     break;
                 }
 
-                case 7: {
+
+                case 6:{
                     AddressBookCSVOperation addressBookCSVOperation=new AddressBookCSVOperation();
-                    System.out.println("Enter the addressbook name you want to add to file");
-                    String bookname=scanner.nextLine();
-                    if(adrbook.containsKey(bookname))
-                      addressBookCSVOperation.writeAddressBookToCSV(adrbook.get(bookname));
-                    else System.out.println("Addressbook does not exist");
+                    addressBookCSVOperation.userInterface(adrbook);
                     break;
                 }
-                case 8:{
-                    AddressBookCSVOperation addressBookCSVOperation=new AddressBookCSVOperation();
-                    addressBookCSVOperation.readAddressBookFromCSV();
+                case 7:{
+                   AddressBookJsonOperation addressBookJsonOperation=new AddressBookJsonOperation();
+                   addressBookJsonOperation.userInterface(adrbook);
                     break;
                 }
                 default:
@@ -87,7 +75,7 @@ public class AddressBook {
 
             }
 
-        } while (!(choice == 9));
+        } while (!(choice == 8));
     }
 
 
