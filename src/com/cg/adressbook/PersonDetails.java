@@ -41,7 +41,7 @@ public class PersonDetails {
         this.email_id=null;
     }
 
-    public String getFirst_name() {
+    public  String getFirst_name() {
         return first_name;
     }
 
@@ -103,6 +103,17 @@ public class PersonDetails {
 
     public void setEmail_id(String email_id) {
         this.email_id = email_id;
+    }
+
+    public <E> void  updateWithField(String field,E value){
+        if(field.equals("address")) setAddress((String)value);
+        if(field.equals("city")) setCity((String)value);
+        if(field.equals("state")) setState((String)value);
+        if(field.equals("phone")) setPhone_number((String)value);
+        if(field.equals("email")) setEmail_id((String)value);
+        if(field.equals("zip")) setZip((long)value);
+
+
     }
 
     @Override

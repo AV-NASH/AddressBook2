@@ -17,4 +17,12 @@ public class AddressbookDatabaseOperationsTest {
 
     }
 
+    @Test
+    public void givenDataUpdateInMemoryAndSyncItWithDataBase() {
+        AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
+        addressbookDatabaseOperations.updateContactInfo("Bill","phone","9988776659");
+        boolean check=addressbookDatabaseOperations.checkDataSyncWithDataBase("Bill");
+        Assert.assertTrue(check);
+
+    }
 }
