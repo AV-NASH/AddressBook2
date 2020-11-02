@@ -33,4 +33,20 @@ public class AddressbookDatabaseOperationsTest {
         ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.retriveFromDataBaseOnDate(LocalDate.of(2020,01,01),LocalDate.of(2020,01,30));
         Assert.assertEquals(1,personDetailsArrayList.size());
     }
+
+    @Test
+    public void givenCityOrStateRetrievedDataShouldMatchCount() {
+        AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
+        ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.retrieveFromDatabaseOnCityState("city","vegas");
+        Assert.assertEquals(1,personDetailsArrayList.size());
+    }
+
+    @Test
+    public void givenDataAddToDataBase() {
+        AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
+        addressbookDatabaseOperations.addAddressbookToDataBase("Thomas","Scott","Chi-Town Street","Virginia","Torronto",123211,"7878565634","thsc22@fr.com");
+        boolean check=addressbookDatabaseOperations.checkAddedDataInDataBase("Thomas");
+        Assert.assertTrue(check);
+
+    }
 }

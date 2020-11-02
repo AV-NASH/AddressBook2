@@ -8,20 +8,19 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class AddressbookDatabaseOperations<E> {
-    Statement statement;
-    PreparedStatement preparedStatement;
+    static Statement statement;
+    static PreparedStatement preparedStatement;
     ArrayList<PersonDetails> personDetailsArrayList=new ArrayList<PersonDetails>();
+
     public void userInterface(TreeMap<String, ArrayList<PersonDetails>> adrbook) {
-        Scanner scanner=new Scanner(System.in);
-        System.out.println("enter your action\n"+"1. retrieve data\n"+"2. exit");
-        int choice =scanner.nextInt();
-        switch (choice){
-            case 1:{
-                viewDataFromDatabase();
-            }
-        }
-
-
+//        Scanner scanner=new Scanner(System.in);
+//        System.out.println("enter your action\n"+"1. retrieve data\n"+"2. exit");
+//        int choice =scanner.nextInt();
+//        switch (choice){
+//            case 1:{
+//                viewDataFromDatabase();
+//            }
+//        }
     }
 
     private void viewDataFromDatabase() {
@@ -178,5 +177,85 @@ public class AddressbookDatabaseOperations<E> {
             throwables.printStackTrace();
         }
         return arrayList;
+    }
+
+    public ArrayList<PersonDetails> retrieveFromDatabaseOnCityState(String field, String value) {
+        ArrayList<PersonDetails> arrayList=new ArrayList<>();
+        String query="select contact_details.first_name,contact_details.last_name,contact_details.phone, contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
+                " from address_details inner join contact_details on address_details.id=contact_details.id" +
+                " where "+field+" =?;";
+        Connection connection=getConnection();
+        try {
+            preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setString(1,value);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            while(resultSet.next()){
+
+                String firstname=resultSet.getString(1);
+                String lastname=resultSet.getString(2);
+                String phone=resultSet.getString(3);
+                String email=resultSet.getString(4);
+                String address=resultSet.getString(5);
+                String city=resultSet.getString(6);
+                String state=resultSet.getString(7);
+                long zip=resultSet.getLong(8);
+
+                arrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return arrayList;
+    }
+
+    public void addAddressbookToDataBase(String firstname, String lastname, String address, String city, String state, int zip, String phone, String email) {
+        int rowaffected=0;
+        Connection connection=getConnection();
+        retrieveDataFromDatabase();
+        String query1=String.format("insert into contact_details values (%s,'%s','%s','%s','%s','%s');",
+                (personDetailsArrayList.isEmpty())?1:((int)personDetailsArrayList.size()+1),firstname,lastname,phone,email,Date.valueOf(LocalDate.now()));
+        try {
+            connection.setAutoCommit(false);
+            statement= connection.createStatement();
+            rowaffected=statement.executeUpdate(query1);
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String query2=String.format("insert into address_details values (%s,'%s','%s','%s',%s);",
+                (personDetailsArrayList.isEmpty())?1:((int)personDetailsArrayList.size()+1),address,city,state,zip);
+        try {
+            connection.setAutoCommit(false);
+            statement= connection.createStatement();
+            rowaffected=statement.executeUpdate(query2);
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        finally {
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+    }
+
+    public boolean checkAddedDataInDataBase(String first_name) {
+       personDetailsArrayList= checkParticularRecordinDB(first_name);
+       if(personDetailsArrayList.isEmpty()) return false;
+       else return true;
     }
 }
