@@ -18,7 +18,7 @@ public class AddressBook {
         do {
             System.out.println("Please enter your action\n" + "1.Add a addressbook\n" + "2.Access a addressbook\n" +
                     "3. Search for persons in a city/state\n" + "4. Number of persons in city/state\n" +
-                    "5. view file operations\n"+"6. viw csv operation\n"+"7. view json operation"+"8. exit");
+                    "5. view file operations\n"+"6. viw csv operation\n"+"7. view json operation\n"+"8. Database operations\n"+"9. exit");
             choice = scanner.nextInt();
             scanner.nextLine();
             switch (choice) {
@@ -70,12 +70,16 @@ public class AddressBook {
                    addressBookJsonOperation.userInterface(adrbook);
                     break;
                 }
+                case 8: {
+                    AddressbookDatabaseOperations addressbookDatabaseOperations=new  AddressbookDatabaseOperations();
+                    addressbookDatabaseOperations.userInterface(adrbook);
+                }
                 default:
                     System.out.println("thank you for using the application");
 
             }
 
-        } while (!(choice == 8));
+        } while (!(choice == 9));
     }
 
 
