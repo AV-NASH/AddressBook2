@@ -1,6 +1,7 @@
 package com.cg.adressbook;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -147,5 +148,35 @@ public class AddressbookDatabaseOperations<E> {
             System.out.println("connection failed");
         }
         return connection;
+    }
+
+    public ArrayList<PersonDetails> retriveFromDataBaseOnDate(LocalDate startDate, LocalDate endDate) {
+        ArrayList<PersonDetails> arrayList=new ArrayList<>();
+        String query="select contact_details.first_name,contact_details.last_name,contact_details.phone, contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
+                " from address_details inner join contact_details on address_details.id=contact_details.id" +
+                " where  date_of_registration between cast(? as date) and cast(? as date);";
+        Connection connection=getConnection();
+        try {
+            preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setString(1,startDate.toString());
+            preparedStatement.setString(2,endDate.toString());
+            ResultSet resultSet=preparedStatement.executeQuery();
+            while(resultSet.next()){
+
+                String firstname=resultSet.getString(1);
+                String lastname=resultSet.getString(2);
+                String phone=resultSet.getString(3);
+                String email=resultSet.getString(4);
+                String address=resultSet.getString(5);
+                String city=resultSet.getString(6);
+                String state=resultSet.getString(7);
+                long zip=resultSet.getLong(8);
+
+                arrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return arrayList;
     }
 }

@@ -3,6 +3,7 @@ package com.cg.adressbook;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -24,5 +25,12 @@ public class AddressbookDatabaseOperationsTest {
         boolean check=addressbookDatabaseOperations.checkDataSyncWithDataBase("Bill");
         Assert.assertTrue(check);
 
+    }
+
+    @Test
+    public void givenDateRangeRetrieveDataShouldMatchCount() {
+        AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
+        ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.retriveFromDataBaseOnDate(LocalDate.of(2020,01,01),LocalDate.of(2020,01,30));
+        Assert.assertEquals(1,personDetailsArrayList.size());
     }
 }
