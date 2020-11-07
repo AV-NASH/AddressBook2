@@ -208,7 +208,7 @@ public class AddressbookDatabaseOperations<E> {
         return arrayList;
     }
 
-    public void addAddressbookToDataBase(String firstname, String lastname, String address, String city, String state, int zip, String phone, String email) {
+    public synchronized void addAddressbookToDataBase(String firstname, String lastname, String address, String city, String state, int zip, String phone, String email) {
         int rowaffected=0;
         Connection connection=getConnection();
         retrieveDataFromDatabase();
@@ -257,5 +257,15 @@ public class AddressbookDatabaseOperations<E> {
        personDetailsArrayList= checkParticularRecordinDB(first_name);
        if(personDetailsArrayList.isEmpty()) return false;
        else return true;
+    }
+
+    public void addMultipleEntriesToDB(ArrayList<PersonDetails> personDetailsArrayList) {
+        personDetailsArrayList.stream().forEach(p->{
+            Runnable runnable=()->{
+              addAddressbookToDataBase(p.getFirst_name(),p.getLast_name(),p.getAddress(),p.getCity(),p.getState(),p.getZip().intValue(),p.getPhone_number(),p.getEmail_id());
+            };
+            Thread thread=new Thread(runnable);
+            thread.start();
+        });
     }
 }
