@@ -260,12 +260,21 @@ public class AddressbookDatabaseOperations<E> {
     }
 
     public void addMultipleEntriesToDB(ArrayList<PersonDetails> personDetailsArrayList) {
+        int[] successfulop = new int[1];successfulop[0]=0;
         personDetailsArrayList.stream().forEach(p->{
             Runnable runnable=()->{
               addAddressbookToDataBase(p.getFirst_name(),p.getLast_name(),p.getAddress(),p.getCity(),p.getState(),p.getZip().intValue(),p.getPhone_number(),p.getEmail_id());
+                successfulop[0]++;
             };
             Thread thread=new Thread(runnable);
             thread.start();
         });
+        while(successfulop[0]<personDetailsArrayList.size()) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
