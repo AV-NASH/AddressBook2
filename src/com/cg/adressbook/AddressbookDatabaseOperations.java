@@ -13,14 +13,7 @@ public class AddressbookDatabaseOperations<E> {
     ArrayList<PersonDetails> personDetailsArrayList=new ArrayList<PersonDetails>();
 
     public void userInterface(TreeMap<String, ArrayList<PersonDetails>> adrbook) {
-//        Scanner scanner=new Scanner(System.in);
-//        System.out.println("enter your action\n"+"1. retrieve data\n"+"2. exit");
-//        int choice =scanner.nextInt();
-//        switch (choice){
-//            case 1:{
-//                viewDataFromDatabase();
-//            }
-//        }
+
     }
 
     private void viewDataFromDatabase() {

@@ -53,13 +53,14 @@ public class AddressbookDatabaseOperationsTest {
     @Test
     public void givenMultipleContactsAddToDatabase() {
         AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
-        long zip=234466;
+
         ArrayList<PersonDetails> personDetailsArrayList=new ArrayList<>();
         personDetailsArrayList.add(new PersonDetails("Thomas","Scott","Chi-Town Street","Virginia","Torronto", 123453L,"7878565634","thsc22@fr.com"));
         personDetailsArrayList.add(new PersonDetails("Phife","Kurt","Baltimore Street","Atlanta","George", 566799L,"7878565677","fdgs22@fr.com"));
         personDetailsArrayList.add(new PersonDetails("Jonathan","Clark","West Coast Lane","Paris","Italy", 878565L,"3478565634","yuj2@.com"));
         addressbookDatabaseOperations.addMultipleEntriesToDB(personDetailsArrayList);
-         personDetailsArrayList=addressbookDatabaseOperations.getPersonDetailsArrayList();
+        addressbookDatabaseOperations.retrieveDataFromDatabase();
+        personDetailsArrayList=addressbookDatabaseOperations.getPersonDetailsArrayList();
         Assert.assertEquals(2,personDetailsArrayList.size());
 
 
