@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -43,7 +44,7 @@ public class AddressBookRESTAssuredTest {
     }
 
     @Test
-    public void givenListOfEmployeesWhenAddedMatch201StatusCodeAndCount() {
+    public void givenListOfContactWhenAddedMatch201StatusCodeAndCount() {
        PersonDetails[] personDetailsarray=getPersonDetails();
         AddressBookRESTAssured addressBookRESTAssured=new AddressBookRESTAssured((Arrays.asList(personDetailsarray)));
        PersonDetails[] newEmployeePayroll={new PersonDetails("Frank","Ocean","Baltimore Street","City of Baltimore","Barcelona", 121256L,"9977553311","froc1@sd.com"),
@@ -62,6 +63,23 @@ public class AddressBookRESTAssuredTest {
         long check= addressBookRESTAssured.countEntries();
         Assert.assertEquals(3,check);
 
+    }
+
+    @Test
+    public void givenToBeUpdatedContact_WhenUpdated_ShouldMatch200Response() {
+        PersonDetails[] personDetailsArray=getPersonDetails();
+        AddressBookRESTAssured addressBookRESTAssured=new AddressBookRESTAssured((Arrays.asList(personDetailsArray)));
+       addressBookRESTAssured.updateDataInMemory("Sally","city","Rome");
+        PersonDetails  personDetails=addressBookRESTAssured.getContactData("Sally");
+        int id=addressBookRESTAssured.getContactID("Sally");
+
+        String jsonFile=new Gson().toJson(personDetails);
+        RequestSpecification requestSpecification=RestAssured.given();
+        requestSpecification.header("Content-Type","application/json");
+        requestSpecification.body(jsonFile);
+        Response response= requestSpecification.put("/addressbook/"+id);
+        int statuscode=response.getStatusCode();
+        Assert.assertEquals(200,statuscode);
     }
 
 }
