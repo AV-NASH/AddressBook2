@@ -17,4 +17,8 @@ public class AddressBookRESTAssured {
     public long countEntries() {
         return  personDetailsArrayList.stream().count();
     }
+
+    public void addPersonToList(PersonDetails personDetails) {
+        personDetailsArrayList.add(personDetails);
+    }
 }
