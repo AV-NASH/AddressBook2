@@ -12,7 +12,11 @@ public class AddressbookDatabaseOperationsTest {
     @Test
     public void givenDataIDBWhenRetrievedShouldMatchExactCount(){
        AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
-       addressbookDatabaseOperations.retrieveDataFromDatabase();
+        try {
+            addressbookDatabaseOperations.retrieveDataFromDatabase();
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.getPersonDetailsArrayList();
         Assert.assertEquals(2,personDetailsArrayList.size());
 
@@ -22,7 +26,12 @@ public class AddressbookDatabaseOperationsTest {
     public void givenDataUpdateInMemoryAndSyncItWithDataBase() {
         AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
         addressbookDatabaseOperations.updateContactInfo("Bill","phone","9988776659");
-        boolean check=addressbookDatabaseOperations.checkDataSyncWithDataBase("Bill");
+        boolean check= false;
+        try {
+            check = addressbookDatabaseOperations.checkDataSyncWithDataBase("Bill");
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         Assert.assertTrue(check);
 
     }
@@ -30,21 +39,37 @@ public class AddressbookDatabaseOperationsTest {
     @Test
     public void givenDateRangeRetrieveDataShouldMatchCount() {
         AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
-        ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.retriveFromDataBaseOnDate(LocalDate.of(2020,01,01),LocalDate.of(2020,01,30));
+        ArrayList<PersonDetails> personDetailsArrayList= null;
+        try {
+            personDetailsArrayList = addressbookDatabaseOperations.retriveFromDataBaseOnDate(LocalDate.of(2020,01,01),LocalDate.of(2020,01,30));
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         Assert.assertEquals(1,personDetailsArrayList.size());
     }
 
     @Test
     public void givenCityOrStateRetrievedDataShouldMatchCount() {
         AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
-        ArrayList<PersonDetails> personDetailsArrayList=addressbookDatabaseOperations.retrieveFromDatabaseOnCityState("city","vegas");
+        ArrayList<PersonDetails> personDetailsArrayList= null;
+        try {
+            personDetailsArrayList = addressbookDatabaseOperations.retrieveFromDatabaseOnCityState("city","vegas");
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         Assert.assertEquals(1,personDetailsArrayList.size());
     }
 
     @Test
     public void givenDataAddToDataBase() {
         AddressbookDatabaseOperations addressbookDatabaseOperations=new AddressbookDatabaseOperations();
-        addressbookDatabaseOperations.addAddressbookToDataBase("Thomas","Scott","Chi-Town Street","Virginia","Torronto",123211,"7878565634","thsc22@fr.com");
+        try {
+            addressbookDatabaseOperations.addAddressbookToDataBase("Thomas","Scott","Chi-Town Street","Virginia","Torronto",123211,"7878565634","thsc22@fr.com");
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.printStackTrace();
+        } catch (ErrorInRollbackException e) {
+            e.getMessage();
+        }
         boolean check=addressbookDatabaseOperations.checkAddedDataInDataBase("Thomas");
         Assert.assertTrue(check);
 
@@ -58,8 +83,16 @@ public class AddressbookDatabaseOperationsTest {
         personDetailsArrayList.add(new PersonDetails("Thomas","Scott","Chi-Town Street","Virginia","Torronto", 123453L,"7878565634","thsc22@fr.com"));
         personDetailsArrayList.add(new PersonDetails("Phife","Kurt","Baltimore Street","Atlanta","George", 566799L,"7878565677","fdgs22@fr.com"));
         personDetailsArrayList.add(new PersonDetails("Jonathan","Clark","West Coast Lane","Paris","Italy", 878565L,"3478565634","yuj2@.com"));
-        addressbookDatabaseOperations.addMultipleEntriesToDB(personDetailsArrayList);
-        addressbookDatabaseOperations.retrieveDataFromDatabase();
+        try {
+            addressbookDatabaseOperations.addMultipleEntriesToDB(personDetailsArrayList);
+        } catch (ThreadInterruptionException e) {
+            e.getMessage();
+        }
+        try {
+            addressbookDatabaseOperations.retrieveDataFromDatabase();
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         personDetailsArrayList=addressbookDatabaseOperations.getPersonDetailsArrayList();
         Assert.assertEquals(2,personDetailsArrayList.size());
 

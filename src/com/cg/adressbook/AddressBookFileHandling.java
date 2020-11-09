@@ -19,7 +19,14 @@ public class AddressBookFileHandling {
                     AddressBookWriteToFile(adrbook.get(bookname),bookname);
                 else System.out.println("Addressbook does not exist");
                 break;}
-            case 2:{ AddressBookReadFromFile();
+            case 2:{
+                try {
+                    AddressBookReadFromFile();
+                } catch (FileDoNotExistException e) {
+                    e.getMessage();
+                } catch (ErrorInFileOperationException e) {
+                  e.getMessage();
+                }
                 break;
             }
         }
@@ -43,7 +50,7 @@ public class AddressBookFileHandling {
         }
     }
 
-    public void AddressBookReadFromFile() {
+    public void AddressBookReadFromFile() throws FileDoNotExistException, ErrorInFileOperationException {
         File file = new File("C:\\Users\\Avinash\\IdeaProjects\\AddressBookProblem\\src\\com\\cg\\adressbook\\file.txt");
 
         try {
@@ -56,11 +63,11 @@ public class AddressBookFileHandling {
 
 
         } catch (FileNotFoundException e) {
-            System.out.println("File does not exist, please create one by adding data to file");
+            throw new FileDoNotExistException("File does not exist");
         }
 
         catch(IOException e){
-
+        throw new ErrorInFileOperationException("There was some error in reading the file");
         }
 
 

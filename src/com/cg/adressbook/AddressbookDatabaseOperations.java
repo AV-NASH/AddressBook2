@@ -17,11 +17,15 @@ public class AddressbookDatabaseOperations<E> {
     }
 
     private void viewDataFromDatabase() {
-        retrieveDataFromDatabase();
+        try {
+            retrieveDataFromDatabase();
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         personDetailsArrayList.forEach(personDetails -> personDetails.toString());
     }
 
-     void retrieveDataFromDatabase() {
+     void retrieveDataFromDatabase() throws ErrorInSqlOperation {
         String query="select contact_details.first_name,contact_details.last_name,contact_details.phone," +
                 "contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
                 " from address_details inner join contact_details on address_details.id=contact_details.id;";
@@ -45,8 +49,7 @@ public class AddressbookDatabaseOperations<E> {
                 personDetailsArrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
             }
         } catch (Exception throwables) {
-         //   System.out.println("cannot retrieve data from database");
-            throwables.printStackTrace();
+        throw new ErrorInSqlOperation("Unable to access data...");
         }
 
     }
@@ -54,17 +57,25 @@ public class AddressbookDatabaseOperations<E> {
 
     public void updateContactInfo(String name, String field, E value) {
         updateDataInMemory(name,field,value);
-        updateDataInDataBase(name,field,value);
-      
+        try {
+            updateDataInDataBase(name,field,value);
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
+
     }
 
     private void updateDataInMemory(String name, String field, E value) {
-        retrieveDataFromDatabase();
+        try {
+            retrieveDataFromDatabase();
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         personDetailsArrayList.stream().filter(p->p.getFirst_name().equals(name)).forEach(p->p.updateWithField(field,value));
         
     }
 
-    private int updateDataInDataBase(String name,String field, E value) {
+    private int updateDataInDataBase(String name,String field, E value) throws ErrorInSqlOperation {
         int result=0;
        String  query=" update contact_details inner join address_details on contact_details.id=address_details.id " +
                "set "+field+"=? where contact_details.first_name=?;";
@@ -77,8 +88,7 @@ public class AddressbookDatabaseOperations<E> {
             result= preparedStatement.executeUpdate();
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("cannot update the database");
+            throw new ErrorInSqlOperation("Unable to access data...");
         }
         return  result;
 
@@ -89,12 +99,12 @@ public class AddressbookDatabaseOperations<E> {
         return personDetailsArrayList;
     }
 
-    public boolean checkDataSyncWithDataBase(String name) {
+    public boolean checkDataSyncWithDataBase(String name) throws ErrorInSqlOperation {
         ArrayList<PersonDetails> personDetailsupdatedlist=new ArrayList<>(  personDetailsArrayList.stream().filter(p->p.getFirst_name().equals(name)).collect(Collectors.toList()));
         return personDetailsupdatedlist.toString().equals(checkParticularRecordinDB(name).toString());
     }
 
-    private ArrayList<PersonDetails> checkParticularRecordinDB(String name) {
+    private ArrayList<PersonDetails> checkParticularRecordinDB(String name) throws ErrorInSqlOperation {
         ArrayList<PersonDetails> arrayList=new ArrayList<>();
         String query="select contact_details.first_name,contact_details.last_name,contact_details.phone," +
                 "contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
@@ -118,7 +128,7 @@ public class AddressbookDatabaseOperations<E> {
                 arrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new ErrorInSqlOperation("Unable to access data...");
         }
         return arrayList;
     }
@@ -137,12 +147,16 @@ public class AddressbookDatabaseOperations<E> {
         try {
             connection= DriverManager.getConnection(jdbcURL,userName,password);
         } catch (SQLException e) {
-            System.out.println("connection failed");
+            try {
+                throw new ErrorInSqlOperation("Unable to connect to database...");
+            } catch (ErrorInSqlOperation errorInSqlOperation) {
+                errorInSqlOperation.getMessage();
+            }
         }
         return connection;
     }
 
-    public ArrayList<PersonDetails> retriveFromDataBaseOnDate(LocalDate startDate, LocalDate endDate) {
+    public ArrayList<PersonDetails> retriveFromDataBaseOnDate(LocalDate startDate, LocalDate endDate) throws ErrorInSqlOperation {
         ArrayList<PersonDetails> arrayList=new ArrayList<>();
         String query="select contact_details.first_name,contact_details.last_name,contact_details.phone, contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
                 " from address_details inner join contact_details on address_details.id=contact_details.id" +
@@ -167,12 +181,12 @@ public class AddressbookDatabaseOperations<E> {
                 arrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new ErrorInSqlOperation("Unable to perform required database operation...");
         }
         return arrayList;
     }
 
-    public ArrayList<PersonDetails> retrieveFromDatabaseOnCityState(String field, String value) {
+    public ArrayList<PersonDetails> retrieveFromDatabaseOnCityState(String field, String value) throws ErrorInSqlOperation {
         ArrayList<PersonDetails> arrayList=new ArrayList<>();
         String query="select contact_details.first_name,contact_details.last_name,contact_details.phone, contact_details.email,address_details.address,address_details.city,address_details.state,address_details.zip" +
                 " from address_details inner join contact_details on address_details.id=contact_details.id" +
@@ -196,15 +210,19 @@ public class AddressbookDatabaseOperations<E> {
                 arrayList.add( new PersonDetails(firstname,lastname,address,city,state,zip,phone,email));
             }
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            throw new ErrorInSqlOperation("Unable to perform required database operation...");
         }
         return arrayList;
     }
 
-    public synchronized void addAddressbookToDataBase(String firstname, String lastname, String address, String city, String state, int zip, String phone, String email) {
+    public synchronized void addAddressbookToDataBase(String firstname, String lastname, String address, String city, String state, int zip, String phone, String email) throws ErrorInSqlOperation, ErrorInRollbackException {
         int rowaffected=0;
         Connection connection=getConnection();
-        retrieveDataFromDatabase();
+        try {
+            retrieveDataFromDatabase();
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
         String query1=String.format("insert into contact_details values (%s,'%s','%s','%s','%s','%s');",
                 (personDetailsArrayList.isEmpty())?1:((int)personDetailsArrayList.size()+1),firstname,lastname,phone,email,Date.valueOf(LocalDate.now()));
         try {
@@ -213,11 +231,11 @@ public class AddressbookDatabaseOperations<E> {
             rowaffected=statement.executeUpdate(query1);
             connection.commit();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
             try {
                 connection.rollback();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new ErrorInRollbackException("Unable to rollback data...");
             }
         }
 
@@ -229,34 +247,44 @@ public class AddressbookDatabaseOperations<E> {
             rowaffected=statement.executeUpdate(query2);
             connection.commit();
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+
             try {
                 connection.rollback();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new ErrorInRollbackException("Unable to rollback data...");
             }
         }
         finally {
             try {
                 connection.close();
             } catch (SQLException throwables) {
-                throwables.printStackTrace();
+                throw new ErrorInSqlOperation("Unable to close the connection...");
             }
         }
 
     }
 
     public boolean checkAddedDataInDataBase(String first_name) {
-       personDetailsArrayList= checkParticularRecordinDB(first_name);
-       if(personDetailsArrayList.isEmpty()) return false;
+        try {
+            personDetailsArrayList= checkParticularRecordinDB(first_name);
+        } catch (ErrorInSqlOperation errorInSqlOperation) {
+            errorInSqlOperation.getMessage();
+        }
+        if(personDetailsArrayList.isEmpty()) return false;
        else return true;
     }
 
-    public void addMultipleEntriesToDB(ArrayList<PersonDetails> personDetailsArrayList) {
+    public void addMultipleEntriesToDB(ArrayList<PersonDetails> personDetailsArrayList) throws ThreadInterruptionException {
         int[] successfulop = new int[1];successfulop[0]=0;
         personDetailsArrayList.stream().forEach(p->{
             Runnable runnable=()->{
-              addAddressbookToDataBase(p.getFirst_name(),p.getLast_name(),p.getAddress(),p.getCity(),p.getState(),p.getZip().intValue(),p.getPhone_number(),p.getEmail_id());
+                try {
+                    addAddressbookToDataBase(p.getFirst_name(),p.getLast_name(),p.getAddress(),p.getCity(),p.getState(),p.getZip().intValue(),p.getPhone_number(),p.getEmail_id());
+                } catch (ErrorInSqlOperation errorInSqlOperation) {
+                    errorInSqlOperation.getMessage();
+                } catch (ErrorInRollbackException e) {
+                    e.getMessage();
+                }
                 successfulop[0]++;
             };
             Thread thread=new Thread(runnable);
@@ -266,7 +294,7 @@ public class AddressbookDatabaseOperations<E> {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new ThreadInterruptionException("Process interrupted for unknown reasons...");
             }
         }
     }

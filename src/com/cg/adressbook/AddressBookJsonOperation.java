@@ -27,7 +27,12 @@ public class AddressBookJsonOperation {
                     addAddressBookTOJson(adrbook.get(bookname));
                 else System.out.println("Addressbook does not exist");
                 break;}
-            case 2:{ readAddressBookJsonFile();
+            case 2:{
+                try {
+                    readAddressBookJsonFile();
+                } catch (ErrorInFileOperationException e) {
+                    e.getMessage();
+                }
                 break;
             }
         }
@@ -40,12 +45,14 @@ public class AddressBookJsonOperation {
         }
     }
 
-    public void readAddressBookJsonFile() throws IOException {
+    public void readAddressBookJsonFile() throws ErrorInFileOperationException {
         try(BufferedReader bufferedReader= Files.newBufferedReader(path)){
             Gson gson=new Gson();
 
           ArrayList<PersonDetails> personDetails= gson.fromJson(bufferedReader,new TypeToken<ArrayList<PersonDetails>>(){}.getType());
           personDetails.forEach(p-> System.out.println(p.toString()));
+        } catch (IOException e) {
+            throw new ErrorInFileOperationException("Error in reading json file");
         }
     }
 }

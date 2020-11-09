@@ -82,5 +82,25 @@ public class AddressBookRESTAssuredTest {
         Assert.assertEquals(200,statuscode);
     }
 
+    @Test
+    public void givenEmployeeToDeleteWhenDeletedShouldMatchStatusCodeAndCount() {
+        PersonDetails[] personDetailsArray=getPersonDetails();
+        AddressBookRESTAssured addressBookRESTAssured=new AddressBookRESTAssured((Arrays.asList(personDetailsArray)));
+        PersonDetails  personDetails=addressBookRESTAssured.getContactData("Sally");
+        int id=addressBookRESTAssured.getContactID("Sally");
+
+        String jsonFile=new Gson().toJson(personDetails);
+        RequestSpecification requestSpecification=RestAssured.given();
+        requestSpecification.header("Content-Type","application/json");
+        requestSpecification.body(jsonFile);
+        Response response= requestSpecification.delete("/addressbook/"+id);
+        int statuscode=response.getStatusCode();
+        Assert.assertEquals(200,statuscode);
+
+      addressBookRESTAssured.removeContactData("Sally");
+        long check= addressBookRESTAssured.countEntries();
+        Assert.assertEquals(2,check);
+    }
+
 }
 

@@ -46,4 +46,8 @@ public class AddressBookRESTAssured<E> {
         }
         return id;
     }
+
+    public void removeContactData(String name) {
+        personDetailsArrayList.remove(getContactID(name)-1);
+    }
 }
